@@ -3,7 +3,7 @@ module GenericDict exposing
     , empty, singleton, insert, update, remove
     , isEmpty, member, get, size
     , keys, values, toList, fromList
-    , map, foldl, foldr, filter, partition
+    , map, fold, filter, partition
     , union, intersect, diff, merge
     )
 
@@ -29,7 +29,7 @@ module GenericDict exposing
 
 # Transform
 
-@docs map, foldl, foldr, filter, partition
+@docs map, fold, filter, partition
 
 
 # Combine
@@ -110,21 +110,21 @@ size (Dict dict) =
     Dict.size dict
 
 
-{-| Get all of the keys in a dictionary, sorted by their string representation.
+{-| Get all of the keys in a dictionary.
 -}
 keys : Dict k v -> List k
-keys =
-    foldr (\key value -> (::) key) []
+keys (Dict dict) =
+    Dict.foldr (\_ ( key, _ ) -> (::) key) [] dict
 
 
-{-| Get all of the values in a dictionary, in the order of their stringified keys.
+{-| Get all of the values in a dictionary.
 -}
 values : Dict k v -> List v
-values =
-    foldr (\key value -> (::) value) []
+values (Dict dict) =
+    Dict.foldr (\_ ( _, value ) -> (::) value) [] dict
 
 
-{-| Convert a dictionary into an association list of key-value pairs, sorted by stringified keys.
+{-| Convert a dictionary into an association list of key-value pairs.
 -}
 toList : Dict k v -> List ( k, v )
 toList (Dict dict) =
@@ -145,20 +145,11 @@ map fn (Dict dict) =
     Dict (Dict.map (\_ ( key, value ) -> ( key, fn key value )) dict)
 
 
-{-| Fold over the key-value pairs in a dictionary from the first one to the last one,
-sorted by stringified keys.
+{-| Fold over the key-value pairs in a dictionary.
 -}
-foldl : (k -> v -> b -> b) -> b -> Dict k v -> b
-foldl fn acc (Dict dict) =
+fold : (k -> v -> b -> b) -> b -> Dict k v -> b
+fold fn acc (Dict dict) =
     Dict.foldl (\_ ( key, value ) -> fn key value) acc dict
-
-
-{-| Fold over the key-value pairs in a dictionary from the last one to the first one,
-sorted by stringified keys.
--}
-foldr : (k -> v -> b -> b) -> b -> Dict k v -> b
-foldr fn acc (Dict dict) =
-    Dict.foldr (\_ ( key, value ) -> fn key value) acc dict
 
 
 {-| Keep only the key-value pairs that pass the given test.

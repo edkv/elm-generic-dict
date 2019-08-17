@@ -9,6 +9,17 @@ you to explicitly pass a `key -> String` function that tells how to convert your
 key type to a `String` to all functions that need it.
 
 
+## Other differences from `elm/core`
+
+The standard `Dict` sorts key-value pairs in the order of keys. In this library
+key-value pairs are sorted by stringified versions of keys. But with non-comparable
+types that are just converted to `String`, thinking about the order doesn't make
+that much sense. So the idea is that you should consider the order an implementation
+detail and shouldn't rely on it when using functions like `keys` and `values`.
+And because of this, instead of having `foldl` and `foldr`, this library exposes
+only one function, which is named `fold`.
+
+
 ## Example
 
 ```elm
